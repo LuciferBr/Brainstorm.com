@@ -34,17 +34,7 @@ keywords = {
 
 all_responses = [resp for cat in responses.values() for resp in cat]
 
-def switch_page(page_id):
-    try:
-        for section in document.querySelectorAll("section"):
-            section.classList.remove("active")
-        for btn in document.querySelectorAll("nav button"):
-            btn.classList.remove("active")
-        document.getElementById(page_id).classList.add("active")
-        document.getElementById(f"{page_id}Btn").classList.add("active")
-    except Exception as e:
-        console.log(f"Error switching page: {str(e)}")
-
+# Chat functions (for igc.html)
 def display_message(message, sender):
     chat_box = document.getElementById("chatBox")
     if chat_box:
@@ -95,9 +85,8 @@ def save_chat(event):
         link.click()
         URL.revokeObjectURL(url)
         display_message(f"Chat saved as {filename}", "ai")
-    else:
-        console.log("Chat box not found")
 
+# Game functions (for game.html)
 def display_game_output(output):
     game_area = document.getElementById("gameArea")
     if game_area:
@@ -128,6 +117,7 @@ def clear_game(event):
     if game_area:
         game_area.innerHTML = ""
 
+# Theme toggle (for all pages)
 def toggle_theme(event):
     body = document.querySelector("body")
     theme_toggle = document.getElementById("themeToggle")
@@ -140,7 +130,7 @@ def toggle_theme(event):
             window.localStorage.setItem("theme", "light")
             theme_toggle.textContent = "Dark Mode"
 
-# Initialize theme
+# Initialize theme (for all pages)
 saved_theme = window.localStorage.getItem("theme")
 theme_toggle = document.getElementById("themeToggle")
 if theme_toggle:
@@ -150,31 +140,39 @@ if theme_toggle:
     else:
         theme_toggle.textContent = "Dark Mode"
 
+# Bind events based on page content
 def bind_events():
-    elements = {
-        "homeBtn": lambda e: switch_page("home"),
-        "aboutBtn": lambda e: switch_page("about"),
-        "igcBtn": lambda e: switch_page("igc"),
-        "plansBtn": lambda e: switch_page("plans"),
-        "gameBtn": lambda e: switch_page("game"),
-        "themeToggle": toggle_theme,
-        "sendButton": send_message,
-        "clearChat": clear_chat,
-        "saveChat": save_chat,
-        "playGame": play_game,
-        "clearGame": clear_game
-    }
-    for element_id, func in elements.items():
-        elem = document.getElementById(element_id)
-        if elem:
-            elem.onclick = func
-        else:
-            console.log(f"Element {element_id} not found")
+    # Theme toggle (all pages)
+    theme_toggle = document.getElementById("themeToggle")
+    if theme_toggle:
+        theme_toggle.onclick = toggle_theme
 
+    # IGC page events
+    send_button = document.getElementById("sendButton")
+    if send_button:
+        send_button.onclick = send_message
+    
+    clear_chat_button = document.getElementById("clearChat")
+    if clear_chat_button:
+        clear_chat_button.onclick = clear_chat
+    
+    save_chat_button = document.getElementById("saveChat")
+    if save_chat_button:
+        save_chat_button.onclick = save_chat
+    
     user_input = document.getElementById("userInput")
     if user_input:
         user_input.onkeypress = lambda e: send_message(e) if e.key == "Enter" else None
 
+    # Game page events
+    play_game_button = document.getElementById("playGame")
+    if play_game_button:
+        play_game_button.onclick = play_game
+    
+    clear_game_button = document.getElementById("clearGame")
+    if clear_game_button:
+        clear_game_button.onclick = clear_game
+    
     game_input = document.getElementById("gameInput")
     if game_input:
         game_input.onkeypress = lambda e: play_game(e) if e.key == "Enter" else None
